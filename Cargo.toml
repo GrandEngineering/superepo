@@ -9,6 +9,9 @@ description = "A blazingly fast cli tool for managing monorepo/project builds, r
 repository = "https://github.com/GrandEngineering/superepo"
 [badges]
 maintainance = { status = "passively-maintained" }
+[[bin]]
+name = "sr"
+path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.5.23", features = ["derive"] }

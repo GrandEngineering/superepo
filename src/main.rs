@@ -29,6 +29,10 @@ enum Commands {
         #[arg(short, long)]
         release: bool,
     },
+    Macro {
+        #[arg(short, long)]
+        name: String,
+    },
 }
 
 fn execute_command(cmd: &str) -> std::process::Output {
