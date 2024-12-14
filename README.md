@@ -1,5 +1,5 @@
 # Supererpo
-A Blazingly fast monorepo tool, made for managing builds and runs.
+A Blazingly fast monorepo/project tool, made for managing builds and runs.
 ## Config
 Every Superepo monorepo or project must use the config which must be located at the root project dir.
 Here's a Example Config:
