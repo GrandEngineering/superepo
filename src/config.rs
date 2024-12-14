@@ -6,7 +6,7 @@ use toml::value::Array;
 pub struct ConfigTomlMonorepo {
     pub name: String,
     pub git: String,
-    pub run: String,
+    pub run: Option<String>,
     pub build: String,
     pub opt_build: Option<String>,
     pub opt_run: Option<String>,
@@ -50,7 +50,7 @@ impl Config {
                 monorepo: ConfigTomlMonorepo {
                     name: "default".to_owned(),
                     git: "".to_owned(),
-                    run: "".to_owned(),
+                    run: None,
                     bins: None,
                     libs: None,
                     build: "".to_owned(),
