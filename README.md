@@ -6,7 +6,6 @@ Here's a Example Config:
 ```toml
 [monorepo]
 name = "engine"
-display_name = "GE Engine"
 git = "git@github.com:GrandEngineering/superepo.git"
 run = "cargo build && cargo run --bin server"
 opt_run = "cargo build --release && cargo run --bin server --release"
