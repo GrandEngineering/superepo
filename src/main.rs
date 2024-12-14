@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{io, path::PathBuf, process::Stdio};
 mod config;
 use clap::{Parser, Subcommand};
 use config::{Config, ConfigTomlBin};
@@ -35,32 +35,29 @@ enum Commands {
     },
 }
 
-fn execute_command(cmd: &str) -> std::process::Output {
-    if cfg!(windows) {
+fn execute_command(cmd: &str) -> io::Result<()> {
+    let mut child = if cfg!(windows) {
         Command::new("cmd")
             .args(["/C", cmd])
-            .output()
-            .expect("Failed to execute command")
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::inherit())
+            .spawn()?
     } else {
         Command::new("sh")
             .args(["-c", cmd])
-            .output()
-            .expect("Failed to execute command")
-    }
-}
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::inherit())
+            .spawn()?
+    };
 
-fn spawn_command(cmd: &str) -> std::process::Child {
-    if cfg!(windows) {
-        Command::new("cmd")
-            .args(["/C", cmd])
-            .spawn()
-            .expect("Failed to execute command")
-    } else {
-        Command::new("sh")
-            .args(["-c", cmd])
-            .spawn()
-            .expect("Failed to execute command")
+    let status = child.wait()?;
+    if !status.success() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!("Command failed with exit code: {}", status),
+        ));
     }
+    Ok(())
 }
 
 fn main() {
@@ -81,13 +78,9 @@ fn main() {
                         };
 
                         println!("Running command for {}: {}", bin_name, cmd);
-                        let output = execute_command(cmd);
-
-                        if !output.status.success() {
-                            eprintln!(
-                                "Command failed with error: {}",
-                                String::from_utf8_lossy(&output.stderr)
-                            );
+                        if let Err(e) = execute_command(cmd) {
+                            eprintln!("Command failed: {}", e);
+                            std::process::exit(1);
                         }
                     } else {
                         println!("Binary '{}' not found in configuration", bin_name);
@@ -106,13 +99,9 @@ fn main() {
                 };
 
                 println!("Running default command: {}", cmd);
-                let output = execute_command(cmd);
-
-                if !output.status.success() {
-                    eprintln!(
-                        "Command failed with error: {}",
-                        String::from_utf8_lossy(&output.stderr)
-                    );
+                if let Err(e) = execute_command(cmd) {
+                    eprintln!("Command failed: {}", e);
+                    std::process::exit(1);
                 }
             }
         }
@@ -131,12 +120,8 @@ fn main() {
                             bin_name,
                             if *release { "release" } else { "debug" }
                         );
-                        let output = spawn_command(cmd)
-                            .wait()
-                            .expect("Failed to wait for command");
-
-                        if !output.success() {
-                            eprintln!("Build failed for binary '{}'", bin_name);
+                        if let Err(e) = execute_command(cmd) {
+                            eprintln!("Build failed for binary '{}': {}", bin_name, e);
                             std::process::exit(1);
                         }
                         return;
@@ -156,12 +141,8 @@ fn main() {
                             bin_name,
                             if *release { "release" } else { "debug" }
                         );
-                        let output = spawn_command(cmd)
-                            .wait()
-                            .expect("Failed to wait for command");
-
-                        if !output.success() {
-                            eprintln!("Build failed for library '{}'", bin_name);
+                        if let Err(e) = execute_command(cmd) {
+                            eprintln!("Build failed for library '{}': {}", bin_name, e);
                             std::process::exit(1);
                         }
                         return;
@@ -185,12 +166,8 @@ fn main() {
                     "Building entire project in {} mode",
                     if *release { "release" } else { "debug" }
                 );
-                let output = spawn_command(cmd)
-                    .wait()
-                    .expect("Failed to wait for command");
-
-                if !output.success() {
-                    eprintln!("Build failed");
+                if let Err(e) = execute_command(cmd) {
+                    eprintln!("Build failed: {}", e);
                     std::process::exit(1);
                 }
             }
