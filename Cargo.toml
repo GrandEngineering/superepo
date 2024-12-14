@@ -5,6 +5,7 @@ version = "0.1.0"
 edition = "2021"
 keywords = ["cli", "development", "tools"]
 categories = ["command-line-utilities", "development-tools"]
+description = "A blazingly fast cli tool for managing monorepo/project builds, runs and more!"
 [badges]
 maintainance = { status = "passively-maintained" }
 
