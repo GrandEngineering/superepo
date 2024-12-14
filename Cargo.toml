@@ -6,6 +6,7 @@ edition = "2021"
 keywords = ["cli", "development", "tools"]
 categories = ["command-line-utilities", "development-tools"]
 description = "A blazingly fast cli tool for managing monorepo/project builds, runs and more!"
+repository = "https://github.com/GrandEngineering/superepo"
 [badges]
 maintainance = { status = "passively-maintained" }
 
