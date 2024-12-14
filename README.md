@@ -1,5 +1,6 @@
 # Supererpo
-A Blazingly fast monorepo/project tool, made for managing builds and runs. Giving your repo superpowers.
+A Blazingly fast tool made for managing builds and runs. Giving your repo superpowers with macros and more.
+
 ## Config
 Every Superepo monorepo or project must use the config which must be located at the root project dir.
 Here's a Example Config:
@@ -35,6 +36,10 @@ build = "cargo build"
 opt_build = "cargo build --release"
 run = "cargo run --bin client"
 opt_run = "cargo run --bin client --release"
+
+[[monorepo.macros]
+name = "fmt"
+run = "cargo fmt"
 ```
 ### Monorepo Table
 | Field     | Obligatory | Type   | Description                                                   |
@@ -47,6 +52,7 @@ opt_run = "cargo run --bin client --release"
 | opt_run   | False      | String | The Command to run a release version of the project.          |
 | libs      | False      | Lib    | An Array of Lib tables to configure libraries of the project. |
 | bins      | False      | Bin    | An Array of Bin tables to configure binaries of the project.  |
+| macros    | False      | Macro  | An Array of Macro tables to configure macros of the project.  |
 #### Lib Tables
 | Field     | Obligatory | Type   | Description                                            |
 |-----------|------------|--------|--------------------------------------------------------|
@@ -61,6 +67,12 @@ opt_run = "cargo run --bin client --release"
 | opt_build | False      | String | The command to build a release version of the binary. |
 | run       | True       | String | The command to run the binary.                        |
 | opt_run   | False      | String | The Command to run a release version of the binary.   |
+### Macro Tables
+| Field     | Obligatory | Type   | Description                                            |
+|-----------|------------|--------|--------------------------------------------------------|
+| name      | True       | String | Name of the macro.                                   |
+| build     | True       | String | The command to run.                                    |
+
 ## Usage
 To build or run using a release version you can use the `--release` flag.
 ### Run
@@ -82,4 +94,9 @@ which will build the default build command specified in the config.
 Or you can build a specific binary by using:
 ```bash
 superepo build <binary_name/lib_name>
+```
+### Macros
+To run a macro, you can use the following command:
+```bash
+superepo macro <macro_name>
 ```

@@ -29,8 +29,10 @@ enum Commands {
         #[arg(short, long)]
         release: bool,
     },
+    /// Runs a Macro
     Macro {
-        #[arg(short, long)]
+        /// The name of the Macro to run
+        #[arg(value_name = "name")]
         name: String,
     },
 }
@@ -170,6 +172,23 @@ fn main() {
                     eprintln!("Build failed: {}", e);
                     std::process::exit(1);
                 }
+            }
+        }
+        Some(Commands::Macro { name }) => {
+            if let Some(macros) = &config.config_toml.monorepo.macros {
+                if let Some(macro_cmd) = macros.iter().find(|m| m.name == *name) {
+                    println!("Running macro '{}': {}", name, macro_cmd.run);
+                    if let Err(e) = execute_command(&macro_cmd.run) {
+                        eprintln!("Macro '{}' failed: {}", name, e);
+                        std::process::exit(1);
+                    }
+                } else {
+                    println!("Macro '{}' not found in configuration", name);
+                    std::process::exit(1);
+                }
+            } else {
+                println!("No macros configured in .superepo.toml");
+                std::process::exit(1);
             }
         }
         _ => {

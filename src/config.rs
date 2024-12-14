@@ -12,6 +12,12 @@ pub struct ConfigTomlMonorepo {
     pub opt_run: Option<String>,
     pub libs: Option<Vec<ConfigTomlLib>>,
     pub bins: Option<Vec<ConfigTomlBin>>,
+    pub macros: Option<Vec<ConfigTomlMacro>>,
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ConfigTomlMacro {
+    pub name: String,
+    pub run: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ConfigTomlLib {
@@ -56,6 +62,7 @@ impl Config {
                     build: "".to_owned(),
                     opt_build: None,
                     opt_run: None,
+                    macros: None,
                 },
             }
         });
